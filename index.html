@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Extractor - Online Tool for Extracting Email Address</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'Spoof';
+            src: url('data:font/woff2;base64,') format('woff2');
+            font-weight: 300;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @font-face {
+            font-family: 'Formular';
+            src: url('data:font/woff2;base64,') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        /* Fallback fonts */
+        .font-spoof {
+            font-family: 'Spoof', 'Inter', sans-serif;
+        }
+        
+        .font-formular {
+            font-family: 'Formular', 'Inter', sans-serif;
+        }
+        
+        .line-numbers {
+            background: linear-gradient(to bottom, #f8f9fa 0%, #f8f9fa 100%);
+            border-right: 1px solid #e9ecef;
+            color: #6c757d;
+            font-size: 12px;
+            line-height: 1.5;
+            padding: 10px 8px;
+            text-align: right;
+            user-select: none;
+            min-width: 50px;
+        }
+        
+        .textarea-container {
+            position: relative;
+            display: flex;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+            height: 400px;
+        }
+        
+        .textarea-container:focus-within {
+            outline: 2px solid #000;
+            outline-offset: -2px;
+        }
+        
+        .custom-textarea {
+            border: none;
+            outline: none;
+            resize: none;
+            line-height: 1.5;
+            font-size: 14px;
+            padding: 10px;
+            font-family: monospace;
+            flex: 1;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: auto;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+        
+        .line-numbers {
+            background: linear-gradient(to bottom, #f8f9fa 0%, #f8f9fa 100%);
+            border-right: 1px solid #e9ecef;
+            color: #6c757d;
+            font-size: 12px;
+            line-height: 1.5;
+            padding: 10px 8px;
+            text-align: right;
+            user-select: none;
+            min-width: 50px;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .success-text {
+            font-size: 19px;
+            text-transform: uppercase;
+            font-weight: 400;
+            color: #155724;
+        }
+        
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+        
+        @media (max-width: 768px) {
+            .main-heading {
+                font-size: 28px !important;
+            }
+            
+            .sub-heading {
+                font-size: 12px !important;
+            }
+            
+            .success-text {
+                font-size: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white px-4 py-3 relative">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <img src="https://debounce.io/wp-content/uploads/2018/01/logo-white.png" alt="DeBounce Logo" class="h-8 w-auto">
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#" class="text-white hover:text-blue-900 transition-colors duration-200 text-sm font-medium">
+                    Disposable Email Checker API
+                </a>
+                <a href="#" class="text-white hover:text-blue-900 transition-colors duration-200 text-sm font-medium">
+                    Back to DeBounce
+                </a>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white focus:outline-none" onclick="toggleMobileMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu fixed top-0 right-0 h-full w-64 bg-blue-600 z-50 md:hidden">
+            <div class="flex items-center justify-between p-4 border-b border-blue-700">
+                <span class="text-lg font-semibold">Menu</span>
+                <button onclick="toggleMobileMenu()" class="text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="p-4 space-y-4">
+                <a href="#" class="block text-white hover:text-blue-200 transition-colors duration-200 py-2">
+                    Disposable Email Checker API
+                </a>
+                <a href="#" class="block text-white hover:text-blue-200 transition-colors duration-200 py-2">
+                    Back to DeBounce
+                </a>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden md:hidden" onclick="toggleMobileMenu()"></div>
+    
+    <!-- Main Content -->
+    <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Main Heading -->
+        <h1 class="main-heading font-spoof text-4xl font-light text-gray-600 mb-4" style="color: #3E3E3E; font-size: 35px; font-weight: 300;">
+            Email Extractor - Online Tool for Extracting Email Address
+        </h1>
+        
+        <!-- Sub Heading -->
+        <h5 class="sub-heading font-spoof text-sm font-light mb-6" style="color: #4E4E4E; font-size: 13px; font-weight: 300;">
+            Input your text into below box and press the Extract button. The tool will extract all the emails in text for you.
+        </h5>
+        
+        <!-- Success Message (Hidden by default) -->
+        <div id="successMessage" class="success-message hidden">
+            <img src="https://debounce.io/extract-email-from-text/img/success.png" alt="Success" class="w-6 h-6">
+            <span id="successText" class="success-text font-formular"></span>
+        </div>
+        
+        <!-- Textarea Container -->
+        <div class="textarea-container mb-4">
+            <div class="line-numbers" id="lineNumbers">
+                1<br>2<br>3<br>4<br>5<br>6<br>7<br>8<br>9<br>10<br>11<br>12<br>13<br>14<br>15<br>16<br>17<br>18<br>19
+            </div>
+            <textarea 
+                id="textInput" 
+                class="custom-textarea" 
+                placeholder="Input your text here."
+                oninput="updateLineNumbers()"
+            ></textarea>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <button 
+                    id="extractBtn"
+                    onclick="extractEmails()" 
+                    class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded text-sm font-medium transition-colors duration-200"
+                    style="background-color: #286090;"
+                >
+                    Extract Emails
+                </button>
+                
+                <select id="sortSelect" class="border border-gray-300 rounded px-3 py-2 text-sm bg-white">
+                    <option value="default">Sort: Default</option>
+                    <option value="asc">Sort: A-Z</option>
+                    <option value="desc">Sort: Z-A</option>
+                </select>
+            </div>
+            
+            <button 
+                id="downloadBtn"
+                onclick="downloadEmails()" 
+                class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded text-sm font-medium transition-colors duration-200 hidden"
+                style="background-color: #286090;"
+            >
+                Download Emails
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        let extractedEmails = [];
+        
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            
+            mobileMenu.classList.toggle('open');
+            mobileOverlay.classList.toggle('hidden');
+        }
+        
+        function updateLineNumbers() {
+            const textarea = document.getElementById('textInput');
+            const lineNumbers = document.getElementById('lineNumbers');
+            const lines = textarea.value.split('\n').length;
+            
+            let lineNumbersHtml = '';
+            for (let i = 1; i <= Math.max(19, lines); i++) {
+                lineNumbersHtml += i + '<br>';
+            }
+            lineNumbers.innerHTML = lineNumbersHtml.slice(0, -4); // Remove last <br>
+        }
+        
+        function extractEmails() {
+            const textInput = document.getElementById('textInput');
+            const text = textInput.value;
+            
+            // Email regex pattern
+            const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+            const emails = text.match(emailRegex) || [];
+            
+            // Remove duplicates
+            extractedEmails = [...new Set(emails)];
+            
+            if (extractedEmails.length > 0) {
+                // Show success message
+                const successMessage = document.getElementById('successMessage');
+                const successText = document.getElementById('successText');
+                successText.textContent = `${extractedEmails.length} EMAIL ADDRESS${extractedEmails.length > 1 ? 'ES' : ''} FOUND.`;
+                successMessage.classList.remove('hidden');
+                
+                // Apply sorting
+                applySorting();
+                
+                // Show download button
+                document.getElementById('downloadBtn').classList.remove('hidden');
+            } else {
+                // Hide success message and download button
+                document.getElementById('successMessage').classList.add('hidden');
+                document.getElementById('downloadBtn').classList.add('hidden');
+                alert('No email addresses found in the text.');
+            }
+        }
+        
+        function applySorting() {
+            const sortSelect = document.getElementById('sortSelect');
+            const textInput = document.getElementById('textInput');
+            let sortedEmails = [...extractedEmails];
+            
+            switch (sortSelect.value) {
+                case 'asc':
+                    sortedEmails.sort();
+                    break;
+                case 'desc':
+                    sortedEmails.sort().reverse();
+                    break;
+                default:
+                    // Keep original order
+                    break;
+            }
+            
+            // Display sorted emails in textarea
+            textInput.value = sortedEmails.join('\n');
+            updateLineNumbers();
+        }
+        
+        function downloadEmails() {
+            if (extractedEmails.length === 0) {
+                alert('No emails to download. Please extract emails first.');
+                return;
+            }
+            
+            const sortSelect = document.getElementById('sortSelect');
+            let emailsToDownload = [...extractedEmails];
+            
+            // Apply current sorting
+            switch (sortSelect.value) {
+                case 'asc':
+                    emailsToDownload.sort();
+                    break;
+                case 'desc':
+                    emailsToDownload.sort().reverse();
+                    break;
+            }
+            
+            const content = emailsToDownload.join('\n');
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'extracted-emails.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+        
+        // Add event listener for sorting change
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            if (extractedEmails.length > 0) {
+                applySorting();
+            }
+        });
+        
+        // Initialize line numbers
+        updateLineNumbers();
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuButton = event.target.closest('button');
+            
+            if (!mobileMenu.contains(event.target) && !mobileMenuButton) {
+                if (mobileMenu.classList.contains('open')) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
